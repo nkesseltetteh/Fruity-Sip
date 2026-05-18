@@ -186,16 +186,16 @@ footer{background:var(--dark);border-top:3px solid var(--orange);text-align:cent
       <div class="contact-detail"><div class="c-icon">🕐</div> Mon – Sat, 7am – 6pm</div>
     </div>
     <div>
-      <div class="contact-form" id="orderForm">
+      <form class="contact-form" id="orderForm">
         <div class="form-row">
-          <div class="form-group"><label>Your name</label><input type="text" placeholder="Ama Mensah"/></div>
-          <div class="form-group"><label>Phone / WhatsApp</label><input type="tel" placeholder="+233 XX XXX XXXX"/></div>
+          <div class="form-group"><label>Your name</label><input type="text" name="name" placeholder="Ama Mensah" required/></div>
+          <div class="form-group"><label>Phone / WhatsApp</label><input type="tel" name="phone" placeholder="+233 XX XXX XXXX" required/></div>
         </div>
-        <div class="form-group"><label>What would you like?</label><select><option value="">Choose a juice...</option><option>Morning Glow</option><option>Watermelon Chill</option><option>Green Reset</option><option>Citrus Burst</option><option>Tropical Dream</option><option>Berry Rich</option><option>Mixed / custom order</option></select></div>
-        <div class="form-group"><label>Delivery address or message</label><textarea rows="3" placeholder="Your address or anything else you'd like us to know..."></textarea></div>
-        <button class="submit-btn" onclick="submitForm()">Send My Order 🍊</button>
+        <div class="form-group"><label>What would you like?</label><select name="juice" required><option value="">Choose a juice...</option><option>Morning Glow</option><option>Watermelon Chill</option><option>Green Reset</option><option>Citrus Burst</option><option>Tropical Dream</option><option>Berry Rich</option><option>Mixed / custom order</option></select></div>
+        <div class="form-group"><label>Delivery address or message</label><textarea name="address" rows="3" placeholder="Your address or anything else you'd like us to know..." required></textarea></div>
+        <button class="submit-btn" type="submit" id="submitBtn">Send My Order 🍊</button>
         <div class="form-success" id="formSuccess">🌿 Thanks! We'll WhatsApp you at the number provided to confirm your order shortly. Can't wait to serve you!</div>
-      </div>
+      </form>
     </div>
   </div>
 </section>
@@ -206,14 +206,34 @@ footer{background:var(--dark);border-top:3px solid var(--orange);text-align:cent
   <div class="foot-copy">© 2026 Fruity Sip. All rights reserved. Made with 🧡 in Ghana.</div>
 </footer>
 <script>
-function submitForm(){
-  const inputs=document.querySelectorAll('#orderForm input,#orderForm select,#orderForm textarea');
-  let filled=true;inputs.forEach(i=>{if(!i.value.trim())filled=false});
-  if(!filled){alert('Please fill in all fields before sending your order.');return}
-  document.getElementById('formSuccess').style.display='block';
-  document.querySelector('.submit-btn').style.display='none';
-  inputs.forEach(i=>{i.disabled=true});
-}
+const form = document.getElementById('orderForm');
+form.addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+  const data = new FormData(form);
+  try {
+    const res = await fetch('https://formspree.io/f/xnjrqrvd', {
+      method: 'POST',
+      body: data,
+      headers: { 'Accept': 'application/json' }
+    });
+    if (res.ok) {
+      document.getElementById('formSuccess').style.display = 'block';
+      btn.style.display = 'none';
+      form.querySelectorAll('input,select,textarea').forEach(i => i.disabled = true);
+    } else {
+      btn.textContent = 'Send My Order 🍊';
+      btn.disabled = false;
+      alert('Something went wrong. Please try again or call us directly!');
+    }
+  } catch(err) {
+    btn.textContent = 'Send My Order 🍊';
+    btn.disabled = false;
+    alert('Something went wrong. Please try again or call us directly!');
+  }
+});
 </script>
 </body>
 </html>
