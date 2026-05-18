@@ -1,5 +1,5 @@
 
-# Fruity Sip Website
+# Juicyee Website
 
 Static website ready for deployment on Netlify.
 
